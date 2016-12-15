@@ -1,5 +1,5 @@
 import * as semver from "semver";
-import { TypingsData, existsTypesDataFileSync, readTypings, settings } from "./lib/common";
+import { TypingsData, existsTypesDataFileSync, fullPackageName, readTypings, settings } from "./lib/common";
 import { Logger, logger, writeLog } from "./util/logging";
 import { fetchJson} from "./util/io";
 import { best, done, nAtATime } from "./util/util";
@@ -48,7 +48,12 @@ async function checkNpm(pkg: TypingsData, log: Logger): Promise<void> {
 	const asOfVersion = firstVersionWithTypes(info.versions);
 	if (asOfVersion) {
 		const ourVersion = `${pkg.libraryMajorVersion}.${pkg.libraryMinorVersion}`;
-		log(`Typings already defined for ${pkg.typingsPackageName} (${pkg.libraryName}) as of ${asOfVersion} (our version: ${ourVersion})`);
+		//log(`Typings already defined for ${pkg.typingsPackageName}: (${pkg.libraryName}) as of ${asOfVersion} (our version: ${ourVersion})`);
+
+		log(`\n===\n\nTypings already defined for ${pkg.typingsPackageName}`);
+		log(`This will deprecate \`${fullPackageName(pkg.typingsPackageName)}\` in favor of just \`${pkg.typingsPackageName}\`. CC ${pkg.authors}`);
+		log(`npm run not-needed -- ${pkg.typingsPackageName} ${asOfVersion} ${info.homepage} ${pkg.libraryName} (our version: ${ourVersion})`);
+		//npm run not-needed -- tsmonad 0.5.0 https://github.com/cbowdon/TsMonad TsMonad`
 	}
 }
 
